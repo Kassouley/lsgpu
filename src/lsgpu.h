@@ -51,10 +51,11 @@ void lsgpu_print_gpus_data(lsgpu_gpu_list_t* gpu_list) ;
 int lsgpu_query_gpus_data(lsgpu_gpu_list_t* gpu_list);
 
 
-int __lsgpu_read_gpu_data_binary_impl(lsgpu_gpu_list_t *gpu_list, FILE* fp);
+int __lsgpu_read_gpu_data_binary_impl(lsgpu_gpu_list_t *gpu_list, uint8_t* buf, size_t size);
 int __lsgpu_write_gpu_data_binary_impl(const lsgpu_gpu_list_t *gpu_list, FILE* fp);
 
 int lsgpu_write_gpu_data_binary(const lsgpu_gpu_list_t *gpu_list, const char *filename);
 int lsgpu_read_gpu_data_binary(lsgpu_gpu_list_t *gpu_list, const char *filename);
+int lsgpu_read_gpu_data_from_buffer(lsgpu_gpu_list_t *gpu_list, uint8_t *buffer, size_t size);
 
 #endif // LSGPU_H

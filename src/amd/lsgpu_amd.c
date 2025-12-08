@@ -100,15 +100,12 @@ int __lsgpu_write_gpu_data_binary_impl(const lsgpu_gpu_list_t *gpu_list, FILE* f
 }
 
 
-int __lsgpu_read_gpu_data_binary_impl(lsgpu_gpu_list_t *gpu_list, FILE* fp)
+int __lsgpu_read_gpu_data_binary_impl(lsgpu_gpu_list_t *gpu_list, uint8_t* buf, size_t size)
 {
     for (size_t i = 0; i < gpu_list->count; i++) 
     {
-        #define READ_FIELD(___, __, type, name, _) \
-            if (read_##type(fp, &gpu_list->entries[i].name) != 1) { \
-                fprintf(stderr, "error: read_"#type"\n"); \
-                return -1;\
-            }
+        #define READ_FIELD(_1, _2, type, name, _5) \
+            read_##type(&buf, &gpu_list->entries[i].name);
         FOR_EACH_FIELD(READ_FIELD)
         #undef READ_FIELD
     }

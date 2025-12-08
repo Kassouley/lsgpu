@@ -3,12 +3,13 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 #define LSGPU_HELPER_API static inline
 
 
 #define write_to_file(fp, v)  fwrite(v, sizeof(*(v)), 1, fp);
-#define read_from_file(fp, v) fread(v, sizeof(*(v)), 1, fp);
+#define read_from_buffer(buf, v) memcpy(v, *buf, sizeof(*v)); *buf += sizeof(*v);
 
 
 /* Strings: write until null terminator */
@@ -21,18 +22,12 @@ static inline int write_str_to_file(FILE *fp, char *v, size_t max_len) {
 }
 
 /* Strings: read until null terminator */
-static inline int read_str_from_file(FILE *fp, char *v, size_t max_len) {
-    if (!fp || !v) return -1;
-    size_t i = 0;
-    int c;
-    while (i < max_len) {
-        c = fgetc(fp);
-        if (c == EOF) return -1;
-        v[i++] = (char)c;
-        if (c == '\0') break;
-    }
-    if (i == max_len) v[max_len - 1] = '\0';
-    return 1;
+static inline void read_str_from_file(uint8_t **buf, char *v, size_t max_len)
+{
+    size_t len = strnlen((char*)*buf, max_len - 1) + 1;
+    memcpy(v, *buf, len);
+    v[len] = '\0';
+    *buf += len;
 }
 
 
@@ -40,56 +35,56 @@ static inline int read_str_from_file(FILE *fp, char *v, size_t max_len) {
 typedef char str64[64];
 
 LSGPU_HELPER_API void print_str64(char v[64]) { printf("%s\n", v); }
-LSGPU_HELPER_API int  write_str64(FILE *fp, char (*v)[64]) { return write_str_to_file(fp, *v, 64); }
-LSGPU_HELPER_API int  read_str64(FILE *fp, char (*v)[64])  { return read_str_from_file(fp, *v, 64); }
+LSGPU_HELPER_API int  write_str64(FILE *fp, char (*v)[64])     { return write_str_to_file(fp, *v, 64); }
+LSGPU_HELPER_API void read_str64(uint8_t **buf, char (*v)[64]) { read_str_from_file(buf, *v, 64); }
 
 
 /** String 21-bytes type helper */
 typedef char str21[21];
 
 LSGPU_HELPER_API void print_str21(char v[21]) { printf("%s\n", v); }
-LSGPU_HELPER_API int  write_str21(FILE *fp, char (*v)[21]) { return write_str_to_file(fp, *v, 21); }
-LSGPU_HELPER_API int  read_str21(FILE *fp, char (*v)[21])  { return read_str_from_file(fp, *v, 21); }
+LSGPU_HELPER_API int  write_str21(FILE *fp, char (*v)[21])     { return write_str_to_file(fp, *v, 21); }
+LSGPU_HELPER_API void read_str21(uint8_t **buf, char (*v)[21]) { read_str_from_file(buf, *v, 21); }
 
 
 /** Unsigned Int 32 type helper */
 typedef uint32_t u32;
 
 LSGPU_HELPER_API void print_u32(u32 v) { printf("%u\n", v); }
-LSGPU_HELPER_API int  write_u32(FILE *fp, u32 *v) { return write_to_file(fp, v); }
-LSGPU_HELPER_API int  read_u32(FILE *fp, u32 *v)  { return read_from_file(fp, v); }
+LSGPU_HELPER_API int  write_u32(FILE *fp, u32 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void read_u32(uint8_t **buf, u32 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 16 type helper */
 typedef uint16_t u16;
 
 LSGPU_HELPER_API void print_u16(u16 v) { printf("%u\n", v); }
-LSGPU_HELPER_API int  write_u16(FILE *fp, u16 *v) { return write_to_file(fp, v); }
-LSGPU_HELPER_API int  read_u16(FILE *fp, u16 *v)  { return read_from_file(fp, v); }
+LSGPU_HELPER_API int  write_u16(FILE *fp, u16 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void read_u16(uint8_t **buf, u16 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 16 Array[3] type helper */
 typedef uint16_t u16x3[3];
 
 LSGPU_HELPER_API void print_u16x3(u16x3 v) { printf("[%u, %u, %u]\n", v[0], v[1], v[2]); }
-LSGPU_HELPER_API int  write_u16x3(FILE *fp, u16x3 *v) { return write_to_file(fp, v); }
-LSGPU_HELPER_API int  read_u16x3(FILE *fp, u16x3 *v)  { return read_from_file(fp, v); }
+LSGPU_HELPER_API int  write_u16x3(FILE *fp, u16x3 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void read_u16x3(uint8_t **buf, u16x3 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 32 Array[3] type helper */
 typedef uint32_t u32x3[3];
 
 LSGPU_HELPER_API void print_u32x3(u32x3 v) { printf("[%u, %u, %u]\n", v[0], v[1], v[2]); }
-LSGPU_HELPER_API int  write_u32x3(FILE *fp, u32x3 *v) { return write_to_file(fp, v); }
-LSGPU_HELPER_API int  read_u32x3(FILE *fp, u32x3 *v)  { return read_from_file(fp, v); }
+LSGPU_HELPER_API int  write_u32x3(FILE *fp, u32x3 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void read_u32x3(uint8_t **buf, u32x3 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 32 Array[4] type helper */
 typedef uint32_t u32x4[4];
 
 LSGPU_HELPER_API void print_u32x4(u32x4 v) { printf("[%u, %u, %u, %u]\n", v[0], v[1], v[2], v[3]); }
-LSGPU_HELPER_API int  write_u32x4(FILE *fp, u32x4 *v) { return write_to_file(fp, v); }
-LSGPU_HELPER_API int  read_u32x4(FILE *fp, u32x4 *v)  { return read_from_file(fp, v); }
+LSGPU_HELPER_API int  write_u32x4(FILE *fp, u32x4 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void read_u32x4(uint8_t **buf, u32x4 *v) { read_from_buffer(buf, v); }
 
 
 
@@ -107,8 +102,8 @@ LSGPU_HELPER_API void print_cache_t(cache_t v) {
     }
 }
 
-LSGPU_HELPER_API int write_cache_t(FILE *fp, cache_t *v) { return write_u32x4(fp, v); }
-LSGPU_HELPER_API int read_cache_t(FILE *fp, cache_t* v)  { return read_u32x4(fp, v); }
+LSGPU_HELPER_API int write_cache_t(FILE *fp, cache_t *v)     { return write_u32x4(fp, v); }
+LSGPU_HELPER_API int read_cache_t(uint8_t **buf, cache_t* v) { read_u32x4(buf, v); }
 
 
 /** Unsigned Int 32 Array[3] alias XYZ type helper */
@@ -121,8 +116,8 @@ LSGPU_HELPER_API void print_u32_xyz_t(u32_xyz_t v) {
         printf("\t%s: %u\n", xyz_labels[j], v[j]);
 }
 
-LSGPU_HELPER_API int write_u32_xyz_t(FILE *fp, u32_xyz_t *v) { return write_u32x3(fp, v); }
-LSGPU_HELPER_API int read_u32_xyz_t(FILE *fp, u32_xyz_t* v)  { return read_u32x3(fp, v); }
+LSGPU_HELPER_API int write_u32_xyz_t(FILE *fp, u32_xyz_t *v)     { return write_u32x3(fp, v); }
+LSGPU_HELPER_API int read_u32_xyz_t(uint8_t **buf, u32_xyz_t* v) { read_u32x3(buf, v); }
 
 
 /** Unsigned Int 16 Array[3] alias XYZ type helper */
@@ -133,7 +128,7 @@ LSGPU_HELPER_API void print_u16_xyz_t(u16_xyz_t v) {
     print_u32_xyz_t(tmp);
 }
 
-LSGPU_HELPER_API int write_u16_xyz_t(FILE *fp, u16_xyz_t *v) { return write_u16x3(fp, v); }
-LSGPU_HELPER_API int read_u16_xyz_t(FILE *fp, u16_xyz_t* v)  { return read_u16x3(fp, v); }
+LSGPU_HELPER_API int write_u16_xyz_t(FILE *fp, u16_xyz_t *v)     { return write_u16x3(fp, v); }
+LSGPU_HELPER_API int read_u16_xyz_t(uint8_t **buf, u16_xyz_t* v) { read_u16x3(buf, v); }
 
 #endif // LSGPU_TYPE_H
