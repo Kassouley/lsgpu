@@ -24,9 +24,12 @@ LSGPU requires:
 - CMake 3.10+
 - A C compiler supporting C99 or later
 - Vendor-specific headers and libraries (AMD HSA for AMD support)
+- Lua 5.1 (optional, only for Lua build)
+
 
 ### Build Steps
 
+- Build lsgpu CLI :
 ```bash
 cd lsgpu
 mkdir build
@@ -41,6 +44,16 @@ cmake -DLSGPU_VENDOR=AMD \
 # cmake -DLSGPU_VENDOR=NVIDIA \
 #        -DLSGPU_VENDOR_INCLUDE_DIR=/path/to/cuda/include \
 #        ..
+
+make
+```
+- Build lsgpu Lua :
+```bash
+cmake -DLSGPU_VENDOR=<VENDOR> \
+       -DLSGPU_VENDOR_INCLUDE_DIR=/path/to/vendor/include \
+       -DLSGPU_BUILD_LUA=ON -DLSGPU_BUILD_CLI=OFF \
+       -DLUA_INCLUDE_DIR=/path/to/lua5.1/include \
+       ..
 
 make
 ```
@@ -90,7 +103,8 @@ The Lua wrapper (`lsgpu_wrapper_lua.c`) exposes GPU device information to Lua sc
 ## Architecture
 
 - `src/lsgpu.h` - Main public API
-- `src/lsgpu.c` - CLI and common functionality
+- `src/lsgpu_cli.c` - CLI Source
+- `src/lsgpu.c` - Common functionality
 - `src/amd/` - AMD/HSA implementation
 - `src/nvidia/` - NVIDIA implementation (placeholder)
 - `lua/` - Lua language bindings
