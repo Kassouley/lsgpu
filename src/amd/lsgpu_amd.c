@@ -27,7 +27,11 @@ static hsa_status_t query_agent_data(hsa_agent_t agent, void* data)
     #undef QUERY_FIELD
 
     agent_data->nearest_cpu_node = get_nearest_cpu_node(agent);
-    agent_data->isa = get_isa_name(agent);
+    char* isa_name = get_isa_name(agent);
+
+    strncpy(agent_data->isa, isa_name, sizeof(agent_data->isa) - 1);
+    agent_data->isa[sizeof(agent_data->isa) - 1] = '\0';
+    free(isa_name);
 
     return HSA_STATUS_SUCCESS;
 }
@@ -78,86 +82,36 @@ void lsgpu_print_gpu_data(lsgpu_gpu_data_t *gpu)
 }
 
 
-void lsgpu_print_gpus_data(lsgpu_gpu_list_t *gpu_list) 
+
+int __lsgpu_write_gpu_data_binary_impl(const lsgpu_gpu_list_t *gpu_list, FILE* fp)
 {
     for (size_t i = 0; i < gpu_list->count; i++)
     {
-        printf("**GPU Device #%lu\n", i+1);
-        lsgpu_print_gpu_data(&gpu_list->entries[i]);
-    }
-}
-
-
-
-int lsgpu_write_gpu_data_binary(const lsgpu_gpu_list_t *gpu_list, const char *filename)
-{
-    if (!gpu_list || !filename) return -1;
-
-    FILE *fp = fopen(filename, "wb");
-    if (!fp) {
-        perror("fopen");
-        return -1;
-    }
-
-    /* Write number of GPU entries first */
-    if (fwrite(&gpu_list->count, sizeof(gpu_list->count), 1, fp) != 1) {
-        perror("fwrite count");
-        fclose(fp);
-        return -1;
-    }
-
-    for (size_t i = 0; i < gpu_list->count; i++)
-    {
-        #define WRITE_FIELD(prefix, label, type, name, _) \
-            write_##type(fp, gpu_list->entries[i].name);
+        #define WRITE_FIELD(___, __, type, name, _) \
+            if (write_##type(fp, &gpu_list->entries[i].name) != 1) { \
+                fprintf(stderr, "error: write_"#type"\n"); \
+                return -1; \
+            }
         FOR_EACH_FIELD(WRITE_FIELD)
         #undef WRITE_FIELD
     }
 
-    fclose(fp);
     return 0;
 }
 
 
-int lsgpu_read_gpu_data_binary(lsgpu_gpu_list_t *gpu_list, const char *filename)
+int __lsgpu_read_gpu_data_binary_impl(lsgpu_gpu_list_t *gpu_list, FILE* fp)
 {
-    if (!gpu_list || !filename) return -1;
-
-    FILE *fp = fopen(filename, "rb");
-    if (!fp) {
-        perror("fopen");
-        return -1;
-    }
-
-    /* Read number of GPU entries */
-    size_t count = 0;
-    if (fread(&count, sizeof(count), 1, fp) != 1) {
-        perror("fread count");
-        fclose(fp);
-        return -1;
-    }
-
-    /* Allocate memory for GPU entries */
-    gpu_list->entries = (lsgpu_gpu_data_t*)calloc(count, sizeof(lsgpu_gpu_data_t));
-    if (!gpu_list->entries) {
-        fclose(fp);
-        return -1;
-    }
-    gpu_list->count = count;
-
-    /* Read each GPU entry field-by-field */
-    for (size_t i = 0; i < count; i++) {
-        #define READ_FIELD(prefix, label, type, name, _) \
-            if (read_##type(fp, &gpu_list->entries[i].name) != 0) { \
-                fclose(fp); \
-                free(gpu_list->entries); \
+    for (size_t i = 0; i < gpu_list->count; i++) 
+    {
+        #define READ_FIELD(___, __, type, name, _) \
+            if (read_##type(fp, &gpu_list->entries[i].name) != 1) { \
+                fprintf(stderr, "error: read_"#type"\n"); \
                 return -1;\
             }
-
         FOR_EACH_FIELD(READ_FIELD)
         #undef READ_FIELD
     }
 
-    fclose(fp);
     return 0;
 }

@@ -43,7 +43,7 @@ macro("  ",                    "UUID",                   str21,            uuid,
 macro("  ",                    "Node",                   u32,              node,              HSA_AGENT_INFO_NODE) \
 macro("  ",                    "Nearest CPU Node",       u32,              nearest_cpu_node,  -1) \
 macro("  ",                    "Driver Node ID",         u32,              driver_node_id,    HSA_AMD_AGENT_INFO_DRIVER_NODE_ID) \
-macro("",                      "Architecture",           str,              isa,               -1) \
+macro("",                      "Architecture",           str64,            isa,               -1) \
 macro("  ",                    "Feature",                feature_t,        feature,           HSA_AGENT_INFO_FEATURE) \
 macro("  ",                    "Machine Model",          machine_model_t,  machine_model,     HSA_AGENT_INFO_MACHINE_MODEL) \
 macro("  ",                    "Version Major",          u16,              version_major,     HSA_AGENT_INFO_VERSION_MAJOR) \

@@ -1,69 +1,72 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
 #include "lsgpu.h"
 
-int main(int argc, char *argv[]) {
-    lsgpu_gpu_list_t devices = {0};
-    const char *binary_filename = NULL;
-
-    int decode = 0;
-    int encode = 0;
-
-    /* Parse command-line arguments for "-b <filename>" */
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-b") == 0) {
-            encode = 1;
-            if (i + 1 < argc) {
-                binary_filename = argv[i + 1];
-                i++; /* skip filename */
-            } else {
-                fprintf(stderr, "Error: -b requires a filename\n");
-                return 1;
-            }
-        } else if (strcmp(argv[i], "-d") == 0) {
-            decode = 1;
-            if (i + 1 < argc) {
-                binary_filename = argv[i + 1];
-                i++; /* skip filename */
-            } else {
-                fprintf(stderr, "Error: -d requires a filename\n");
-                return 1;
-            }
-        }
+void lsgpu_print_gpus_data(lsgpu_gpu_list_t *gpu_list) 
+{
+    for (size_t i = 0; i < gpu_list->count; i++)
+    {
+        printf("**GPU Device #%lu\n", i+1);
+        lsgpu_print_gpu_data(&gpu_list->entries[i]);
     }
-    
-    if(lsgpu_init() != 0) {
-        fprintf(stderr, "Failed to init lsgpu\n");
-        return 1;
+}
+
+
+int lsgpu_write_gpu_data_binary(const lsgpu_gpu_list_t *gpu_list, const char *filename)
+{
+    if (!gpu_list || !filename) return -1;
+
+    FILE *fp = fopen(filename, "wb");
+    if (!fp) {
+        perror("fopen");
+        return -1;
     }
 
-    if (lsgpu_query_gpus_data(&devices) != 0) {
-        fprintf(stderr, "Failed to query GPU devices\n");
-        return 1;
-    }
-    
-    if (encode) {
-        if (lsgpu_write_gpu_data_binary(&devices, binary_filename) != 0) {
-            fprintf(stderr, "Failed to write GPU data to binary file '%s'\n", binary_filename);
-        } else {
-            printf("GPU data written to binary file '%s' successfully.\n", binary_filename);
-        }
-    } else if (encode) {
-        if (lsgpu_read_gpu_data_binary(&devices, binary_filename) != 0) {
-            fprintf(stderr, "Failed to read GPU data from binary file '%s'\n", binary_filename);
-        } else {
-            lsgpu_print_gpus_data(&devices);
-        }
-    } else {
-        lsgpu_print_gpus_data(&devices);
+    /* Write number of GPU entries */
+    if (fwrite(&gpu_list->count, sizeof(gpu_list->count), 1, fp) != 1) {
+        perror("fwrite count");
+        fclose(fp);
+        return -1;
     }
 
+    int status = __lsgpu_write_gpu_data_binary_impl(gpu_list, fp);
 
-    free(devices.entries);
-    
-    if(lsgpu_fini() != 0) {
-        fprintf(stderr, "Failed to fini lsgpu\n");
-        return 1;
+    fclose(fp);
+    return status;
+}
+
+
+int lsgpu_read_gpu_data_binary(lsgpu_gpu_list_t *gpu_list, const char *filename)
+{
+    if (!gpu_list || !filename) return -1;
+
+    FILE *fp = fopen(filename, "rb");
+    if (!fp) {
+        perror("fopen");
+        return -1;
     }
 
-    return 0;
+    /* Read number of GPU entries */
+    if (fread(&gpu_list->count, sizeof(gpu_list->count), 1, fp) != 1) {
+        perror("fread count");
+        fclose(fp);
+        return -1;
+    }
+
+    /* Allocate memory for GPU entries */
+    gpu_list->entries = (lsgpu_gpu_data_t*)calloc(gpu_list->count, sizeof(lsgpu_gpu_data_t));
+    if (!gpu_list->entries) {
+        perror("calloc");
+        fclose(fp);
+        return -1;
+    }
+
+    int status = __lsgpu_read_gpu_data_binary_impl(gpu_list, fp);
+
+    fclose(fp);
+    return status;
 }
