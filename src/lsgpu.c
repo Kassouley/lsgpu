@@ -83,7 +83,7 @@ int lsgpu_read_gpu_data_from_buffer(lsgpu_gpu_list_t *gpu_list, uint8_t *buffer,
     if (!gpu_list || !buffer || size < sizeof(int)) return -1;
 
     // Read GPU count
-    if (sizeof(gpu_list->count) < size) {
+    if (sizeof(gpu_list->count) > size) {
         fprintf(stderr, "error: unbound buffer\n");
         return -1;
     }
