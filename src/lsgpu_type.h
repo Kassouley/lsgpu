@@ -102,8 +102,8 @@ LSGPU_HELPER_API void print_cache_t(cache_t v) {
     }
 }
 
-LSGPU_HELPER_API int write_cache_t(FILE *fp, cache_t *v)     { return write_u32x4(fp, v); }
-LSGPU_HELPER_API int read_cache_t(uint8_t **buf, cache_t* v) { read_u32x4(buf, v); }
+LSGPU_HELPER_API int  write_cache_t(FILE *fp, cache_t *v)     { return write_u32x4(fp, v); }
+LSGPU_HELPER_API void read_cache_t(uint8_t **buf, cache_t* v) { read_u32x4(buf, v); }
 
 
 /** Unsigned Int 32 Array[3] alias XYZ type helper */
@@ -116,8 +116,8 @@ LSGPU_HELPER_API void print_u32_xyz_t(u32_xyz_t v) {
         printf("\t%s: %u\n", xyz_labels[j], v[j]);
 }
 
-LSGPU_HELPER_API int write_u32_xyz_t(FILE *fp, u32_xyz_t *v)     { return write_u32x3(fp, v); }
-LSGPU_HELPER_API int read_u32_xyz_t(uint8_t **buf, u32_xyz_t* v) { read_u32x3(buf, v); }
+LSGPU_HELPER_API int  write_u32_xyz_t(FILE *fp, u32_xyz_t *v)     { return write_u32x3(fp, v); }
+LSGPU_HELPER_API void read_u32_xyz_t(uint8_t **buf, u32_xyz_t* v) { read_u32x3(buf, v); }
 
 
 /** Unsigned Int 16 Array[3] alias XYZ type helper */
@@ -128,7 +128,7 @@ LSGPU_HELPER_API void print_u16_xyz_t(u16_xyz_t v) {
     print_u32_xyz_t(tmp);
 }
 
-LSGPU_HELPER_API int write_u16_xyz_t(FILE *fp, u16_xyz_t *v)     { return write_u16x3(fp, v); }
-LSGPU_HELPER_API int read_u16_xyz_t(uint8_t **buf, u16_xyz_t* v) { read_u16x3(buf, v); }
+LSGPU_HELPER_API int  write_u16_xyz_t(FILE *fp, u16_xyz_t *v)     { return write_u16x3(fp, v); }
+LSGPU_HELPER_API void read_u16_xyz_t(uint8_t **buf, u16_xyz_t* v) { read_u16x3(buf, v); }
 
 #endif // LSGPU_TYPE_H
