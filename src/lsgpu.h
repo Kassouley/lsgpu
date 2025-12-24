@@ -10,6 +10,7 @@
 #elif defined(__LSGPU_VENDOR_NVIDIA__)
     #include "nvidia/lsgpu_nvidia.h"
 #else
+    typedef struct lsgpu_gpu_data_s { uint8_t dummy; } lsgpu_gpu_data_t;
     #error "No GPU vendor defined. Please define __LSGPU_VENDOR_AMD__ or __LSGPU_VENDOR_NVIDIA__."
 #endif
 
