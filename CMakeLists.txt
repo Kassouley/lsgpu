@@ -39,6 +39,10 @@ set(LSGPU_SOURCES src/lsgpu.c ${VENDOR_SRC})
 #
 add_library(lsgpu_core STATIC ${LSGPU_SOURCES})
 
+
+set_property(TARGET lsgpu_core PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+
 #
 # Configure the static library
 #

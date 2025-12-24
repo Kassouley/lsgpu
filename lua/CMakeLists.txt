@@ -34,5 +34,4 @@ if (NOT TARGET lsgpu_core)
     message(FATAL_ERROR "lsgpu_core target not found. Ensure the parent lsgpu CMakeLists.txt is included.")
 endif()
 
-set_property(TARGET lsgpu_core PROPERTY POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(${PROJECT_NAME} PRIVATE lsgpu_core)
