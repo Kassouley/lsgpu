@@ -76,11 +76,38 @@ void lsgpu_print_gpu_data(lsgpu_gpu_data_t *gpu)
 {
     #define PRINT_FIELD(prefix, label, type, name, _) \
         print_label(label, prefix); \
-        print_##type(gpu->name);
+        print_##type(stdout, gpu->name); \
+        printf("\n");
     FOR_EACH_FIELD(PRINT_FIELD)
     #undef PRINT_FIELD
 }
 
+
+void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t *gpu)
+{
+    FILE *fp = fopen(filename, "w");
+    if (!fp) {
+        perror("Failed to open file");
+        return;
+    }
+
+    int printed_fields = 0;
+
+    fprintf(fp, "[{\n");
+
+    #define PRINT_FIELD(prefix, label, type, name, _) \
+        if (printed_fields > 0) fprintf(fp, ",\n"); \
+        fprintf(fp, "\t\"%s\": ", label); \
+        tojson_##type(fp, gpu->name); \
+        printed_fields++;
+
+    FOR_EACH_FIELD(PRINT_FIELD)
+
+    #undef PRINT_FIELD
+
+    fprintf(fp, "\n}]");
+    fclose(fp);
+}
 
 
 int __lsgpu_write_gpu_data_binary_impl(const lsgpu_gpu_list_t *gpu_list, FILE* fp)

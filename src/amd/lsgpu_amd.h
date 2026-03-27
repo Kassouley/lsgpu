@@ -61,7 +61,7 @@ macro("Queue Properties:\n  ", "Queue Type",             queue_type_t,     queue
 macro("  ",                    "Queues Max",             u32,              queues_max,        HSA_AGENT_INFO_QUEUES_MAX) \
 macro("  ",                    "Queue Min Size",         u32,              queue_min_size,    HSA_AGENT_INFO_QUEUE_MIN_SIZE) \
 macro("  ",                    "Queue Max Size",         u32,              queue_max_size,    HSA_AGENT_INFO_QUEUE_MAX_SIZE) \
-macro("Topology\n  ",          "CU Count",               u32,              cu_count,          HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT) \
+macro("Topology:\n  ",         "CU Count",               u32,              cu_count,          HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT) \
 macro("  ",                    "Max Wave Per CU",        u32,              max_wave_per_cu,   HSA_AMD_AGENT_INFO_MAX_WAVES_PER_CU) \
 macro("  ",                    "Num SIMD per CU",        u32,              num_simd_per_cu,   HSA_AMD_AGENT_INFO_NUM_SIMDS_PER_CU) \
 macro("  ",                    "Num SE",                 u32,              num_se,            HSA_AMD_AGENT_INFO_NUM_SHADER_ENGINES) \

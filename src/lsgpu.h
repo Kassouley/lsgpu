@@ -46,8 +46,11 @@ int lsgpu_init();
 int lsgpu_fini();
 
 void lsgpu_print_gpu_data(lsgpu_gpu_data_t* gpu);
+void lsgpu_print_gpus_data(lsgpu_gpu_list_t* gpu_list);
 
-void lsgpu_print_gpus_data(lsgpu_gpu_list_t* gpu_list) ;
+void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t *gpu);
+void lsgpu_to_json_gpus_data(const char* prefix_filename, lsgpu_gpu_list_t *gpu_list);
+
 
 int lsgpu_query_gpus_data(lsgpu_gpu_list_t* gpu_list);
 

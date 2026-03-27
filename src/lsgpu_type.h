@@ -34,56 +34,63 @@ static inline void read_str_from_file(uint8_t **buf, char *v, size_t max_len)
 /** String 64-bytes type helper */
 typedef char str64[64];
 
-LSGPU_HELPER_API void print_str64(char v[64]) { printf("%s\n", v); }
-LSGPU_HELPER_API int  write_str64(FILE *fp, char (*v)[64])     { return write_str_to_file(fp, *v, 64); }
-LSGPU_HELPER_API void read_str64(uint8_t **buf, char (*v)[64]) { read_str_from_file(buf, *v, 64); }
+LSGPU_HELPER_API void print_str64(FILE *fp,      char v[64])    { fprintf(fp, "%s", v); }
+LSGPU_HELPER_API void tojson_str64(FILE *fp,     char v[64])    { fprintf(fp, "\"%s\"", v); }
+LSGPU_HELPER_API int  write_str64(FILE *fp,      char (*v)[64]) { return write_str_to_file(fp, *v, 64); }
+LSGPU_HELPER_API void read_str64(uint8_t **buf,  char (*v)[64]) { read_str_from_file(buf, *v, 64); }
 
 
 /** String 21-bytes type helper */
 typedef char str21[21];
 
-LSGPU_HELPER_API void print_str21(char v[21]) { printf("%s\n", v); }
-LSGPU_HELPER_API int  write_str21(FILE *fp, char (*v)[21])     { return write_str_to_file(fp, *v, 21); }
-LSGPU_HELPER_API void read_str21(uint8_t **buf, char (*v)[21]) { read_str_from_file(buf, *v, 21); }
+LSGPU_HELPER_API void print_str21(FILE *fp,      char v[21])    { fprintf(fp, "%s", v); }
+LSGPU_HELPER_API void tojson_str21(FILE *fp,     char v[21])    { fprintf(fp, "\"%s\"", v); }
+LSGPU_HELPER_API int  write_str21(FILE *fp,      char (*v)[21]) { return write_str_to_file(fp, *v, 21); }
+LSGPU_HELPER_API void read_str21(uint8_t **buf,  char (*v)[21]) { read_str_from_file(buf, *v, 21); }
 
 
 /** Unsigned Int 32 type helper */
 typedef uint32_t u32;
 
-LSGPU_HELPER_API void print_u32(u32 v) { printf("%u\n", v); }
-LSGPU_HELPER_API int  write_u32(FILE *fp, u32 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void print_u32(FILE *fp,     u32 v)  { fprintf(fp, "%u", v); }
+LSGPU_HELPER_API void tojson_u32(FILE *fp,    u32 v)  { print_u32(fp, v); }
+LSGPU_HELPER_API int  write_u32(FILE *fp,     u32 *v) { return write_to_file(fp, v); }
 LSGPU_HELPER_API void read_u32(uint8_t **buf, u32 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 16 type helper */
 typedef uint16_t u16;
 
-LSGPU_HELPER_API void print_u16(u16 v) { printf("%u\n", v); }
-LSGPU_HELPER_API int  write_u16(FILE *fp, u16 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void print_u16(FILE *fp,     u16 v)  { fprintf(fp, "%u", v); }
+LSGPU_HELPER_API void tojson_u16(FILE *fp,    u16 v)  { print_u16(fp, v); }
+LSGPU_HELPER_API int  write_u16(FILE *fp,     u16 *v) { return write_to_file(fp, v); }
 LSGPU_HELPER_API void read_u16(uint8_t **buf, u16 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 16 Array[3] type helper */
 typedef uint16_t u16x3[3];
 
-LSGPU_HELPER_API void print_u16x3(u16x3 v) { printf("[%u, %u, %u]\n", v[0], v[1], v[2]); }
-LSGPU_HELPER_API int  write_u16x3(FILE *fp, u16x3 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void print_u16x3(FILE *fp,     u16x3 v)  { fprintf(fp, "[%u, %u, %u]", v[0], v[1], v[2]); }
+LSGPU_HELPER_API void tojson_u16x3(FILE *fp,    u16x3 v)  { print_u16x3(fp, v); }
+LSGPU_HELPER_API int  write_u16x3(FILE *fp,     u16x3 *v) { return write_to_file(fp, v); }
 LSGPU_HELPER_API void read_u16x3(uint8_t **buf, u16x3 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 32 Array[3] type helper */
 typedef uint32_t u32x3[3];
 
-LSGPU_HELPER_API void print_u32x3(u32x3 v) { printf("[%u, %u, %u]\n", v[0], v[1], v[2]); }
-LSGPU_HELPER_API int  write_u32x3(FILE *fp, u32x3 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void print_u32x3(FILE *fp,     u32x3 v)  { fprintf(fp, "[%u, %u, %u]", v[0], v[1], v[2]); }
+LSGPU_HELPER_API void tojson_u32x3(FILE *fp,    u32x3 v)  { print_u32x3(fp, v); }
+LSGPU_HELPER_API int  write_u32x3(FILE *fp,     u32x3 *v) { return write_to_file(fp, v); }
 LSGPU_HELPER_API void read_u32x3(uint8_t **buf, u32x3 *v) { read_from_buffer(buf, v); }
 
 
 /** Unsigned Int 32 Array[4] type helper */
 typedef uint32_t u32x4[4];
 
-LSGPU_HELPER_API void print_u32x4(u32x4 v) { printf("[%u, %u, %u, %u]\n", v[0], v[1], v[2], v[3]); }
-LSGPU_HELPER_API int  write_u32x4(FILE *fp, u32x4 *v)     { return write_to_file(fp, v); }
+LSGPU_HELPER_API void print_u32x4(FILE *fp,     u32x4 v)  { fprintf(fp, "[%u, %u, %u, %u]", v[0], v[1], v[2], v[3]); }
+LSGPU_HELPER_API void tojson_u32x4(FILE *fp,    u32x4 v)  { print_u32x4(fp, v); }
+LSGPU_HELPER_API int  write_u32x4(FILE *fp,     u32x4 *v) { return write_to_file(fp, v); }
 LSGPU_HELPER_API void read_u32x4(uint8_t **buf, u32x4 *v) { read_from_buffer(buf, v); }
 
 
@@ -91,15 +98,26 @@ LSGPU_HELPER_API void read_u32x4(uint8_t **buf, u32x4 *v) { read_from_buffer(buf
 /** Unsigned Int 32 Array[4] alias Cache type helper */
 typedef u32x4 cache_t;
 
-LSGPU_HELPER_API void print_cache_t(cache_t v) {
-    const char* cache_labels[] = { "L1", "L2", "L3", "L4" };
-    printf("\n");
-    for (size_t j = 0; j < 4; j++)
-    {
+static const char* cache_labels[] = { "L1", "L2", "L3", "L4" };
+LSGPU_HELPER_API void print_cache_t(FILE *fp, cache_t v) {
+    for (size_t j = 0; j < 4; j++) {
+        if (v[j] != 0) fprintf(fp, "\n\t%s: %-10u (0x%x) KB", cache_labels[j], v[j], v[j]);
+    }
+}
+
+LSGPU_HELPER_API void tojson_cache_t(FILE *fp, cache_t v) {
+    int first = 1;
+    fprintf(fp, "{ ");
+    for (size_t j = 0; j < 4; j++) {
         if (v[j] != 0) {
-            printf("\t%s: %-10u (0x%x) KB\n", cache_labels[j], v[j], v[j]);
+            if (!first) {
+                fprintf(fp, ", ");
+            }
+            fprintf(fp, "\"%s\": \"%u (0x%x) KB\"", cache_labels[j], v[j], v[j]);
+            first = 0;
         }
     }
+    fprintf(fp, " }");
 }
 
 LSGPU_HELPER_API int  write_cache_t(FILE *fp, cache_t *v)     { return write_u32x4(fp, v); }
@@ -109,11 +127,24 @@ LSGPU_HELPER_API void read_cache_t(uint8_t **buf, cache_t* v) { read_u32x4(buf, 
 /** Unsigned Int 32 Array[3] alias XYZ type helper */
 typedef u32x3 u32_xyz_t;
 
-LSGPU_HELPER_API void print_u32_xyz_t(u32_xyz_t v) {
-    const char* xyz_labels[]   = { "x", "y", "z" };
-    printf("\n");
-    for (size_t j = 0; j < 3; j++)
-        printf("\t%s: %u\n", xyz_labels[j], v[j]);
+static const char* xyz_labels[]   = { "x", "y", "z" };
+LSGPU_HELPER_API void print_u32_xyz_t(FILE*fp, u32_xyz_t v) {
+    for (size_t j = 0; j < 3; j++) fprintf(fp, "\n\t%s: %u", xyz_labels[j], v[j]);
+}
+
+LSGPU_HELPER_API void tojson_u32_xyz_t(FILE *fp, u32_xyz_t v) {
+    int first = 1;
+    fprintf(fp, "{ ");
+    for (size_t j = 0; j < 4; j++) {
+        if (v[j] != 0) {
+            if (!first) {
+                fprintf(fp, ", ");
+            }
+            fprintf(fp, "\"%s\": %u", xyz_labels[j], v[j]);
+            first = 0;
+        }
+    }
+    fprintf(fp, " }");
 }
 
 LSGPU_HELPER_API int  write_u32_xyz_t(FILE *fp, u32_xyz_t *v)     { return write_u32x3(fp, v); }
@@ -123,9 +154,14 @@ LSGPU_HELPER_API void read_u32_xyz_t(uint8_t **buf, u32_xyz_t* v) { read_u32x3(b
 /** Unsigned Int 16 Array[3] alias XYZ type helper */
 typedef u16x3 u16_xyz_t;
 
-LSGPU_HELPER_API void print_u16_xyz_t(u16_xyz_t v) {
+LSGPU_HELPER_API void print_u16_xyz_t(FILE*fp, u16_xyz_t v) {
     u32_xyz_t tmp = { v[0], v[1], v[2] };
-    print_u32_xyz_t(tmp);
+    print_u32_xyz_t(fp, tmp);
+}
+
+LSGPU_HELPER_API void tojson_u16_xyz_t(FILE*fp, u16_xyz_t v) {
+    u32_xyz_t tmp = { v[0], v[1], v[2] };
+    tojson_u32_xyz_t(fp, tmp);
 }
 
 LSGPU_HELPER_API int  write_u16_xyz_t(FILE *fp, u16_xyz_t *v)     { return write_u16x3(fp, v); }

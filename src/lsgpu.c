@@ -10,10 +10,21 @@ void lsgpu_print_gpus_data(lsgpu_gpu_list_t *gpu_list)
 {
     for (size_t i = 0; i < gpu_list->count; i++)
     {
-        printf("**GPU Device #%lu\n", i+1);
+        printf("**GPU Device #%u\n", gpu_list->entries[i].node);
         lsgpu_print_gpu_data(&gpu_list->entries[i]);
     }
 }
+
+void lsgpu_to_json_gpus_data(const char* prefix_filename, lsgpu_gpu_list_t *gpu_list)
+{
+    char filename[512];
+
+    for (size_t i = 0; i < gpu_list->count; i++) {
+        snprintf(filename, sizeof(filename), "%s_gpu_%u.json", prefix_filename, gpu_list->entries[i].node);
+        lsgpu_to_json_gpu_data(filename, &gpu_list->entries[i]);
+    }
+}
+
 
 
 int lsgpu_write_gpu_data_binary(const lsgpu_gpu_list_t *gpu_list, const char *filename)

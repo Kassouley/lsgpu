@@ -3,7 +3,7 @@
 #include "lsgpu.h"
 
 void usage() {
-    fprintf(stderr, "Usage: lsgpu [-b <filename>] | [-d <filename>]\n");
+    fprintf(stderr, "Usage: lsgpu [-b <filename>] | [-j <filename>] | [-d <filename>]\n");
     exit(EXIT_FAILURE);
 }
 
@@ -11,9 +11,10 @@ int main(int argc, char *argv[])
 {
     lsgpu_gpu_list_t devices = {0};
 
-    const char *binary_filename = NULL;
+    const char *filename = NULL;
     int decode = 0;
     int encode = 0;
+    int json = 0;
 
     if (argc != 1 && argc != 3) {
         usage();
@@ -22,10 +23,12 @@ int main(int argc, char *argv[])
             encode = 1;
         } else if (strcmp(argv[1], "-d") == 0) {
             decode = 1;
+        } else if (strcmp(argv[1], "-j") == 0) {
+            json = 1;
         } else {
             usage();
         }
-        binary_filename = argv[2];
+        filename = argv[2];
     }
     
     if(lsgpu_init() != 0) {
@@ -42,17 +45,19 @@ int main(int argc, char *argv[])
 
     
     if (encode) {
-        if (lsgpu_write_gpu_data_binary(&devices, binary_filename) != 0) {
-            fprintf(stderr, "Failed to write GPU data to binary file '%s'\n", binary_filename);
+        if (lsgpu_write_gpu_data_binary(&devices, filename) != 0) {
+            fprintf(stderr, "Failed to write GPU data to binary file '%s'\n", filename);
         } else {
-            printf("GPU data written to binary file '%s' successfully.\n", binary_filename);
+            printf("GPU data written to binary file '%s' successfully.\n", filename);
         }
     } else if (decode) {
-        if (lsgpu_read_gpu_data_binary(&devices, binary_filename) != 0) {
-            fprintf(stderr, "Failed to read GPU data from binary file '%s'\n", binary_filename);
+        if (lsgpu_read_gpu_data_binary(&devices, filename) != 0) {
+            fprintf(stderr, "Failed to read GPU data from binary file '%s'\n", filename);
         } else {
             lsgpu_print_gpus_data(&devices);
         }
+    } else if (json) {
+        lsgpu_to_json_gpus_data(filename, &devices);
     } else {
         lsgpu_print_gpus_data(&devices);
     }
