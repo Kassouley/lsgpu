@@ -135,7 +135,7 @@ LSGPU_HELPER_API void print_u32_xyz_t(FILE*fp, u32_xyz_t v) {
 LSGPU_HELPER_API void tojson_u32_xyz_t(FILE *fp, u32_xyz_t v) {
     int first = 1;
     fprintf(fp, "{ ");
-    for (size_t j = 0; j < 4; j++) {
+    for (size_t j = 0; j < 3; j++) {
         if (v[j] != 0) {
             if (!first) {
                 fprintf(fp, ", ");
