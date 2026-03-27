@@ -93,7 +93,7 @@ void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t *gpu)
 
     int printed_fields = 0;
 
-    fprintf(fp, "[{\n");
+    fprintf(fp, "{\n");
 
     #define PRINT_FIELD(prefix, label, type, name, _) \
         if (printed_fields > 0) fprintf(fp, ",\n"); \
@@ -105,7 +105,7 @@ void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t *gpu)
 
     #undef PRINT_FIELD
 
-    fprintf(fp, "\n}]");
+    fprintf(fp, "\n}");
     fclose(fp);
 }
 
