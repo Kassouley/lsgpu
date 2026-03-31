@@ -87,7 +87,7 @@ void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t *gpu)
 {
     FILE *fp = fopen(filename, "w");
     if (!fp) {
-        perror("Failed to open file");
+        perror("lsgpu - Error: ailed to open file");
         return;
     }
 
@@ -116,7 +116,7 @@ int __lsgpu_write_gpu_data_binary_impl(const lsgpu_gpu_list_t *gpu_list, FILE* f
     {
         #define WRITE_FIELD(___, __, type, name, _) \
             if (write_##type(fp, &gpu_list->entries[i].name) != 1) { \
-                fprintf(stderr, "error: write_"#type"\n"); \
+                fprintf(stderr, "lsgpu - Error: write_"#type"\n"); \
                 return -1; \
             }
         FOR_EACH_FIELD(WRITE_FIELD)

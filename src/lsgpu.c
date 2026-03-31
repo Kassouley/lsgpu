@@ -33,13 +33,13 @@ int lsgpu_write_gpu_data_binary(const lsgpu_gpu_list_t *gpu_list, const char *fi
 
     FILE *fp = fopen(filename, "wb");
     if (!fp) {
-        perror("fopen");
+        perror("lsgpu - Error: fopen");
         return -1;
     }
 
     /* Write number of GPU entries */
     if (fwrite(&gpu_list->count, sizeof(gpu_list->count), 1, fp) != 1) {
-        perror("fwrite count");
+        perror("lsgpu - Error: fwrite count");
         fclose(fp);
         return -1;
     }
@@ -57,7 +57,7 @@ static int load_file_to_buffer(const char *filename, uint8_t **buffer, size_t *s
 
     FILE *fp = fopen(filename, "rb");
     if (!fp) {
-        perror("fopen");
+        perror("lsgpu - Error: fopen");
         return -1;
     }
 
@@ -72,13 +72,13 @@ static int load_file_to_buffer(const char *filename, uint8_t **buffer, size_t *s
 
     *buffer = (uint8_t*)malloc(file_size);
     if (!*buffer) {
-        perror("malloc");
+        perror("lsgpu - Error: malloc");
         fclose(fp);
         return -1;
     }
 
     if (fread(*buffer, 1, file_size, fp) != (size_t)file_size) {
-        perror("fread");
+        perror("lsgpu - Error: fread");
         free(*buffer);
         fclose(fp);
         return -1;
@@ -95,7 +95,7 @@ int lsgpu_read_gpu_data_from_buffer(lsgpu_gpu_list_t *gpu_list, uint8_t *buffer,
 
     // Read GPU count
     if (sizeof(gpu_list->count) > size) {
-        fprintf(stderr, "error: unbound buffer\n");
+        fprintf(stderr, "lsgpu - Error: unbound buffer\n");
         return -1;
     }
     memcpy(&gpu_list->count, buffer, sizeof(gpu_list->count));
@@ -104,7 +104,7 @@ int lsgpu_read_gpu_data_from_buffer(lsgpu_gpu_list_t *gpu_list, uint8_t *buffer,
     // Allocate GPU entries
     gpu_list->entries = (lsgpu_gpu_data_t*)calloc(gpu_list->count, sizeof(lsgpu_gpu_data_t));
     if (!gpu_list->entries) {
-        perror("calloc");
+        perror("lsgpu - Error: calloc");
         return -1;
     }
 
