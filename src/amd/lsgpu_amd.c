@@ -87,7 +87,7 @@ void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t *gpu)
 {
     FILE *fp = fopen(filename, "w");
     if (!fp) {
-        perror("lsgpu - Error: ailed to open file");
+        perror("lsgpu - Error: failed to open file");
         return;
     }
 
