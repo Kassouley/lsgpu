@@ -1,30 +1,30 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
 
-project(lsgpu_lua C)
-
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(LSGPU_LUA lsgpu_lua)
 
 # ---- Dependencies ----
 if (NOT DEFINED LUA_INCLUDE_DIR)
-    message(FATAL_ERROR "LUA_INCLUDE_DIR must be provided to build the ${PROJECT_NAME} module")
+    message(FATAL_ERROR "LUA_INCLUDE_DIR must be provided to build the ${LSGPU_LUA} module")
 endif()
 
 # ---- Source ----
 set(SOURCE
-    "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/${LSGPU_LUA}.c"
 )
 
 # ---- Build the Lua module ----
-add_library(${PROJECT_NAME} MODULE ${SOURCE})
+add_library(${LSGPU_LUA} MODULE ${SOURCE})
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_property(TARGET ${LSGPU_LUA} PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+set_target_properties(${LSGPU_LUA} PROPERTIES
     PREFIX "" 
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lua 
-    OUTPUT_NAME "${PROJECT_NAME}"
+    OUTPUT_NAME "${LSGPU_LUA}"
 )
 
 # ---- Include dirs ----
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${LSGPU_LUA} PRIVATE
     ${LUA_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
@@ -34,4 +34,4 @@ if (NOT TARGET lsgpu_core)
     message(FATAL_ERROR "lsgpu_core target not found. Ensure the parent lsgpu CMakeLists.txt is included.")
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE lsgpu_core)
+target_link_libraries(${LSGPU_LUA} PRIVATE lsgpu_core)
