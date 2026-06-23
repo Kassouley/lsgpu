@@ -5,11 +5,31 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <hsa/hsa.h>
-#include <hsa/hsa_ext_amd.h>
 #include "lsgpu_type.h"
-#include "lsgpu_amd.h"
-#include "lsgpu_hsa_helper.h"
+
+static inline const char* get_device_type(uint32_t id) {
+    static const char* device_types[] = { "CPU", "GPU", "DSP", "AIE" };
+    uint32_t count = sizeof(device_types) / sizeof(device_types[0]);
+    return (id < count) ? device_types[id] : "-";
+}
+
+static inline const char* get_feature_type(uint32_t id) {
+    static const char* feature_types[] = { "AGENT DISPATCH", "KERNEL DISPATCH" };
+    uint32_t count = sizeof(feature_types) / sizeof(feature_types[0]);
+    return (id < count) ? feature_types[id] : "-";
+}
+
+static inline const char* get_machine_model_type(uint32_t id) {
+    static const char* machine_model_types[] = { "SMALL", "LARGE" };
+    uint32_t count = sizeof(machine_model_types) / sizeof(machine_model_types[0]);
+    return (id < count) ? machine_model_types[id] : "-";
+}
+
+static inline const char* get_queue_type(uint32_t id) {
+    static const char* queue_types[] = { "MULTI", "SINGLE", "COOPERATIVE" };
+    uint32_t count = sizeof(queue_types) / sizeof(queue_types[0]);
+    return (id < count) ? queue_types[id] : "-";
+}
 
 typedef u32 queue_type_t;
 LSGPU_HELPER_API void print_queue_type_t(FILE* fp, u32 v) { fprintf(fp, "%s", get_queue_type(v)); }

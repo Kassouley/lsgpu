@@ -35,3 +35,8 @@ if (NOT TARGET lsgpu_core)
 endif()
 
 target_link_libraries(${LSGPU_LUA} PRIVATE lsgpu_core)
+
+if (LSGPU_VENDOR STREQUAL "AMD")
+    target_link_libraries(${LSGPU_LUA} PRIVATE hsa-runtime64)
+elseif (LSGPU_VENDOR STREQUAL "NVIDIA")
+endif()

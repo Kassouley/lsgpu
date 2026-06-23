@@ -25,21 +25,21 @@ typedef struct {
  * ============================================================================ */
 
 /**
- * lsgpu.init() -> boolean
+ * lsgpu.query_init() -> boolean
  * Initialize LSGPU library
  */
-static int lua_lsgpu_init(lua_State *L) {
-    int result = lsgpu_init();
+static int lua_lsgpu_query_init(lua_State *L) {
+    int result = lsgpu_query_init();
     lua_pushboolean(L, result == 0);
     return 1;
 }
 
 /**
- * lsgpu.fini() -> boolean
+ * lsgpu.query_fini() -> boolean
  * Finalize LSGPU library
  */
-static int lua_lsgpu_fini(lua_State *L) {
-    int result = lsgpu_fini();
+static int lua_lsgpu_query_fini(lua_State *L) {
+    int result = lsgpu_query_fini();
     lua_pushboolean(L, result == 0);
     return 1;
 }
@@ -163,7 +163,10 @@ static int lua_lsgpu_gpu_list_gc(lua_State *L) {
     
     if (ud->list) {
         if (ud->list->entries) {
+            for(int i = 0; i < ud->list->count; i++)
+                lsgpu_destroy_gpu_data(ud->list->entries[i]);
             free(ud->list->entries);
+
         }
         free(ud->list);
         ud->list = NULL;
@@ -207,8 +210,8 @@ static int lua_lsgpu_gpu_list_tostring(lua_State *L) {
  * ============================================================================ */
 
 static const struct luaL_Reg lsgpu_functions[] = {
-    {"init",                  lua_lsgpu_init},
-    {"fini",                  lua_lsgpu_fini},
+    {"init",                  lua_lsgpu_query_init},
+    {"fini",                  lua_lsgpu_query_fini},
     {"query_gpus",            lua_lsgpu_query_gpus},
     {"write_binary",          lua_lsgpu_write_binary},
     {"read_binary",           lua_lsgpu_read_binary},

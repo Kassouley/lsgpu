@@ -6,12 +6,42 @@
 
 #include "lsgpu.h"
 
+static const uint8_t lsgpu_attribute_offset[] = {
+    [LSGPU_ATTRIBUTE_TYPE]    = LSGPU_TYPE_OFFSET,
+    [LSGPU_ATTRIBUTE_NODE_ID] = LSGPU_NODE_ID_OFFSET,
+};
+
+static const uint8_t lsgpu_attribute_width[] = {
+    [LSGPU_ATTRIBUTE_TYPE]    = LSGPU_TYPE_WIDTH,
+    [LSGPU_ATTRIBUTE_NODE_ID] = LSGPU_NODE_ID_WIDTH,
+};
+
+void lsgpu_get_attribute(lsgpu_gpu_data_t gpu, lsgpu_attribute_t attribute, void* out)
+{
+    if (!out) return;
+
+    const uint8_t* bytes = (const uint8_t*)gpu;
+
+    uint32_t offset = lsgpu_attribute_offset[attribute];
+    uint32_t width  = lsgpu_attribute_width[attribute];
+
+    uint32_t raw = 0;
+    memcpy(&raw, bytes + offset, (width + 7) / 8);
+
+    raw &= ((1u << width) - 1u);
+
+    memcpy(out, &raw, sizeof(raw));
+}
+
+
 void lsgpu_print_gpus_data(lsgpu_gpu_list_t *gpu_list) 
 {
     for (size_t i = 0; i < gpu_list->count; i++)
     {
-        printf("**GPU Device #%u\n", gpu_list->entries[i].node);
-        lsgpu_print_gpu_data(&gpu_list->entries[i]);
+        uint32_t node_id = 0;
+        lsgpu_get_attribute(gpu_list->entries[i], LSGPU_ATTRIBUTE_NODE_ID, &node_id);
+        printf("**GPU Device #%u\n", node_id);
+        lsgpu_print_gpu_data(gpu_list->entries[i]);
     }
 }
 
@@ -20,8 +50,10 @@ void lsgpu_to_json_gpus_data(const char* prefix_filename, lsgpu_gpu_list_t *gpu_
     char filename[512];
 
     for (size_t i = 0; i < gpu_list->count; i++) {
-        snprintf(filename, sizeof(filename), "%s_gpu_%u.json", prefix_filename, gpu_list->entries[i].node);
-        lsgpu_to_json_gpu_data(filename, &gpu_list->entries[i]);
+        uint32_t node_id = 0;
+        lsgpu_get_attribute(gpu_list->entries[i], LSGPU_ATTRIBUTE_NODE_ID, &node_id);
+        snprintf(filename, sizeof(filename), "%s_gpu_%u.json", prefix_filename, node_id);
+        lsgpu_to_json_gpu_data(filename, gpu_list->entries[i]);
     }
 }
 

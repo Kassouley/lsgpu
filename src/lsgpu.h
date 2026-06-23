@@ -5,14 +5,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__LSGPU_VENDOR_AMD__)
-    #include "amd/lsgpu_amd.h"
-#elif defined(__LSGPU_VENDOR_NVIDIA__)
-    #include "nvidia/lsgpu_nvidia.h"
-#else
-    typedef struct lsgpu_gpu_data_s { uint8_t dummy; } lsgpu_gpu_data_t;
-    #error "No GPU vendor defined. Please define __LSGPU_VENDOR_AMD__ or __LSGPU_VENDOR_NVIDIA__."
-#endif
+typedef enum {
+    LSGPU_TYPE_OFFSET = 0,
+    LSGPU_NODE_ID_OFFSET = 4
+} lsgpu_attribute_offsets_t;
+
+typedef enum {
+    LSGPU_TYPE_WIDTH = 4,
+    LSGPU_NODE_ID_WIDTH = 8
+} lsgpu_attribute_width_t;
+
+typedef enum {
+    LSGPU_ATTRIBUTE_TYPE,
+    LSGPU_ATTRIBUTE_NODE_ID
+} lsgpu_attribute_t;
 
 
 static inline void print_label(const char* label, const char* prefix) {
@@ -35,25 +41,27 @@ static inline void print_label(const char* label, const char* prefix) {
         printf(" ");
 }
 
+typedef struct lsgpu_gpu_data_s* lsgpu_gpu_data_t;
 
 typedef struct {
     uint32_t count;
     lsgpu_gpu_data_t* entries;
 } lsgpu_gpu_list_t;
 
-int lsgpu_init();
-
-int lsgpu_fini();
-
-void lsgpu_print_gpu_data(lsgpu_gpu_data_t* gpu);
-void lsgpu_print_gpus_data(lsgpu_gpu_list_t* gpu_list);
-
-void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t *gpu);
-void lsgpu_to_json_gpus_data(const char* prefix_filename, lsgpu_gpu_list_t *gpu_list);
-
-
+int lsgpu_query_init();
+int lsgpu_query_fini();
 int lsgpu_query_gpus_data(lsgpu_gpu_list_t* gpu_list);
 
+void lsgpu_print_gpu_data(lsgpu_gpu_data_t gpu);
+void lsgpu_print_gpus_data(lsgpu_gpu_list_t* gpu_list);
+
+void lsgpu_to_json_gpu_data(const char* filename, lsgpu_gpu_data_t gpu);
+void lsgpu_to_json_gpus_data(const char* prefix_filename, lsgpu_gpu_list_t *gpu_list);
+
+void lsgpu_get_attribute(lsgpu_gpu_data_t gpu, lsgpu_attribute_t attribute, void* out);
+
+void lsgpu_create_gpu_data(lsgpu_gpu_data_t* gpu);
+void lsgpu_destroy_gpu_data(lsgpu_gpu_data_t gpu);
 
 int __lsgpu_read_gpu_data_binary_impl(lsgpu_gpu_list_t *gpu_list, uint8_t* buf, size_t size);
 int __lsgpu_write_gpu_data_binary_impl(const lsgpu_gpu_list_t *gpu_list, FILE* fp);

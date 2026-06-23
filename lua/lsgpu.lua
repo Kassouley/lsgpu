@@ -31,7 +31,7 @@ local function main()
 		binary_filename = arg[2]
 	end
 
-	local ok = lsgpu.init()
+	local ok = lsgpu.query_init()
 	if not ok then
 		io.stderr:write("Failed to init lsgpu\n")
 		return 1
@@ -43,14 +43,14 @@ local function main()
 		gpus, errmsg = lsgpu.query_gpus()
 		if not gpus then
 			io.stderr:write("Failed to query GPU devices: ", tostring(errmsg), "\n")
-			lsgpu.fini()
+			lsgpu.query_fini()
 			return 1
 		end
 
 		local wrote, werr = lsgpu.write_binary(gpus, binary_filename)
 		if not wrote then
 			io.stderr:write("Failed to write GPU data to binary file '", binary_filename, "': ", tostring(werr), "\n")
-			lsgpu.fini()
+			lsgpu.query_fini()
 			return 1
 		end
 
@@ -60,14 +60,14 @@ local function main()
 		gpus, errmsg = lsgpu.read_binary(binary_filename)
 		if not gpus then
 			io.stderr:write("Failed to read GPU data from binary file '", binary_filename, "': ", tostring(errmsg), "\n")
-			lsgpu.fini()
+			lsgpu.query_fini()
 			return 1
 		end
 
 		local printed, perr = lsgpu.print(gpus)
 		if not printed then
 			io.stderr:write("Failed to print GPU data: ", tostring(perr), "\n")
-			lsgpu.fini()
+			lsgpu.query_fini()
 			return 1
 		end
 
@@ -75,19 +75,19 @@ local function main()
 		gpus, errmsg = lsgpu.query_gpus()
 		if not gpus then
 			io.stderr:write("Failed to query GPU devices: ", tostring(errmsg), "\n")
-			lsgpu.fini()
+			lsgpu.query_fini()
 			return 1
 		end
 
 		local printed, perr = lsgpu.print(gpus)
 		if not printed then
 			io.stderr:write("Failed to print GPU data: ", tostring(perr), "\n")
-			lsgpu.fini()
+			lsgpu.query_fini()
 			return 1
 		end
 	end
 
-	local fini_ok = lsgpu.fini()
+	local fini_ok = lsgpu.query_fini()
 	if not fini_ok then
 		io.stderr:write("Failed to fini lsgpu\n")
 		return 1

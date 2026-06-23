@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
         filename = argv[2];
     }
     
-    if(lsgpu_init() != 0) {
+    if(lsgpu_query_init() != 0) {
         fprintf(stderr, "Failed to init lsgpu\n");
         return 1;
     }
@@ -62,9 +62,12 @@ int main(int argc, char *argv[])
         lsgpu_print_gpus_data(&devices);
     }
 
+    for(int i = 0; i < devices.count; i++)
+        lsgpu_destroy_gpu_data(devices.entries[i]);
+
     free(devices.entries);
     
-    if(lsgpu_fini() != 0) {
+    if(lsgpu_query_fini() != 0) {
         fprintf(stderr, "Failed to fini lsgpu\n");
         return 1;
     }
